@@ -1,0 +1,30 @@
+{
+
+  "loglevel": "info",
+
+  "background-color": "white",
+
+  "aws": {
+    "upload_endpoint": "s3-us-west-1.amazonaws.com",
+    "download_endpoint": "s3-us-west-2.amazonaws.com"
+  },
+
+  "max": {
+    "height": 1200,
+    "width": 1200
+  },
+
+  "compression": {
+    "quality": 75,
+    "image/png": "Lossless",
+    "image/jpeg": "JPEG"
+  },
+
+  "valid-type": ["jpg", "jpeg", "png", "gif", "svg", "tiff", "bmp"],
+  "valid-mime": ["image/png", "image/jpeg", "image/tiff", "image/bmp", "image/gif"],
+
+  "convert-mime":  ["image/tiff", "image/bmp"],
+  "resize-mime":   ["image/png", "image/jpeg", "image/gif", "image/bmp", "image/tiff"],
+  "compress-mime": ["image/png", "image/jpeg"],
+  "compress-svg":  ["image/svg+xml"]
+}

@@ -1,0 +1,18 @@
+#!/usr/bin/env ansible-playbook -i inventory.ini
+---
+- hosts: all
+
+  vars:
+    lambda_name: png-optimize
+    aws_role: arn:aws:iam:::role/lambda_exec_role
+
+
+  tasks:
+    - name: Create Zip Of adsnative_imagemagic Folder
+      shell: zip -r ../lambda.zip ../ -x *.git* -x *.vagrant*
+
+    - name: Deploy To AWS
+      shell: |
+        aws lambda update-function-code \
+          --function-name={{ aws_role }} \
+          --zip-file=fileb://$(pwd)/../lambda.zip
