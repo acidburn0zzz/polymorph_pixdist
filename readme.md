@@ -1,5 +1,13 @@
+NOTE: Lambda has a maximum file size of 30 megs. We need to be judicious with size constraints.
 
-This project listens to S3 `create` events. It then fetches compresses images with a mime type listed in `mimetype` it then uploads it to the `aws:bucket_name` in `config/default.json`.
+This project listens to S3 `create` events. It then does the following:
+
+* compresses images
+* strips EXIF data
+* TODO: add AdsNative EXIF image header.
+* creates a thumbnail
+
+It then uploads it to the `aws:bucket_name` in `config/default.json`.
 
 # Installation
 
@@ -18,13 +26,28 @@ npm start
 
 # Deploy
 
+The image manipulation libraries must be compiled within a 64bit ubuntu environment.
+
 ```
-node-lambda deploy
+vagrant up
 ```
 
-or
+on the vagrant run the following
+
+```
+nave use stable
+rm -rf node_modules
+npm install
+```
+
+then on your local machine
 
 ```
 zip -r lambda.zip .
-aws lambda upload-function --function-name=png-optimize --function-zip=lambda.zip --runtime=nodejs --role="arn:aws:iam::273752619615:role/lambda_invoke_role" --handler=handler --mode=event
+aws lambda upload-function --function-name=png-optimize --function-zip=lambda.zip --runtime=nodejs --role="arn:aws:iam::273752619615:role/lambda_exec_role" --handler=index.handler --mode=event
 ```
+
+# TODOs
+
+* Add AdsNative EXIF header. This should be used to prevent duplicate processing.
+TODO: log each step to console

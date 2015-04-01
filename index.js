@@ -41,17 +41,21 @@ exports.handler = function(event, context) {
     return;
   }
 
+  console.log('starting');
+
   // Download the image from S3, transform, and upload to a different S3 bucket.
   async.waterfall([
     function download(next) {
+      console.log('fetch image');
       // Download the image from S3 into a buffer.
       s3.getObject({
           Bucket: srcBucket,
           Key: srcKey
         },
-        next);
-      },
+      next);
+    },
     function tranform(response, next) {
+      console.log('transform image');
 
       var contentType = response.ContentType;
       var mime = nconf.get('mime');
@@ -77,6 +81,8 @@ exports.handler = function(event, context) {
 
     },
     function upload(contentType, data, next) {
+      console.log('upload image');
+
       // Stream the transformed image to a different S3 bucket.
       s3.putObject({
           Bucket: dstBucket,
@@ -85,8 +91,7 @@ exports.handler = function(event, context) {
           ContentType: contentType
         },
         next);
-      }
-    ], function (err) {
+      }], function (err) {
       if (err) {
         console.error(
           'Unable to resize ' + srcBucket + '/' + srcKey +
