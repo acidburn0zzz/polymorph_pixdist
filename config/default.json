@@ -1,0 +1,11 @@
+{
+  "aws": {
+    "bucket_name": "deleteme-image-optim-processed"
+  },
+  "mime": {
+    "image/png": "optipng",
+    "image/svg+xml": "svgo",
+    "image/jpeg": "jpegtran",
+    "image/gif": "gifsicle"
+  }
+}

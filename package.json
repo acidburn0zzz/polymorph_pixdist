@@ -1,0 +1,18 @@
+{
+  "name": "adsnative_imagemagic",
+  "version": "1.0.0",
+  "description": "AWS lambda for image processing.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node-lambda run",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sam@adsnative.com",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^0.9.0",
+    "aws-sdk": "^2.1.20",
+    "imagemin": "^3.1.0",
+    "nconf": "^0.7.1"
+  }
+}
