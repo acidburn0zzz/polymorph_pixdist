@@ -52,3 +52,4 @@ aws lambda upload-function --function-name=png-optimize --function-zip=lambda.zi
 * Add AdsNative EXIF header. This should be used to prevent duplicate processing.
 * Add shippable logging with node-winston
 * Create thumbnail version
+* animated gifs do not compress (FIX IT)

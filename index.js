@@ -37,7 +37,7 @@ exports.handler = function(event, context) {
   }
 
   var imageType = typeMatch[1];
-  if (["jpg","png","gif","svg","svgz"].indexOf(imageType)<0) {
+  if (["jpg", "jpeg", "png", "gif", "svg"].indexOf(imageType)<0) {
     console.log('skipping non-image ' + srcKey);
     return;
   }
