@@ -1,15 +1,21 @@
 {
+
+  "loglevel": "info",
+
   "aws": {
     "bucket_name": "deleteme-image-optim-processed"
   },
+
   "thumb": {
     "max-height": 100,
     "max-width": 100
   },
+
   "full": {
     "max-height": 1000,
     "max-width": 1000
   },
+
   "mime": {
     "image/png": "optipng",
     "image/svg+xml": "svgo",

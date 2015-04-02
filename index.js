@@ -17,8 +17,9 @@ exports.handler = function(event, context) {
 
   console.log("Reading options from event:\n", util.inspect(event, {depth: 5}));
 
+  var srcKeyTmp = event.Records[0].s3.object.key;
   var srcBucket = event.Records[0].s3.bucket.name;
-  var srcKey    = event.Records[0].s3.object.key;
+  var srcKey    = decodeURI(srcKeyTmp).replace(/\+/g, ' ');
   var dstBucket = nconf.get('aws:bucket_name');
   var dstKey    = srcKey; // keep the same name
 
@@ -71,11 +72,13 @@ exports.handler = function(event, context) {
       .run(function (err, file) {
 
         if (err) {
-          console.error(err);
+          console.error('\n\nYou probably need to recompile for your architecture.');
+          console.error(' remove your node_modules folder and start over.\n\n');
+          console.error(err.message);
           return;
         }
 
-        // Limit to a single file for now.
+        // Each new event contains a single file.
         next(null, contentType, file[0].contents);
       });
 
