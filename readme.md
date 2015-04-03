@@ -12,6 +12,8 @@ It then uploads it to the `aws:bucket_name` in `config/default.json`.
 ### Installation
 
 ```
+brew install imagemagick
+brew install graphicsmagic
 npm install
 npm install -g node-lambda
 ```
@@ -49,7 +51,5 @@ aws lambda upload-function --function-name=png-optimize --function-zip=lambda.zi
 
 ### TODOs
 
-* Add AdsNative EXIF header. This should be used to prevent duplicate processing.
-* Add shippable logging with node-winston
 * Create thumbnail version
-* animated gifs do not compress (FIX IT)
+* Drop frame rate on gif images

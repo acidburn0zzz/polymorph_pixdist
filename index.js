@@ -3,12 +3,20 @@ var AWS = require('aws-sdk');
 var util = require('util');
 var nconf = require('nconf');
 var path = require('path');
-var Imagemin = require('imagemin');
+var gm = require('gm').subClass({ imageMagick: true });
+
 
 nconf
 .argv()
 .env()
 .file({file: path.join(__dirname, 'config', 'default.json')});
+
+var compress = require('./lib/compress');
+var convert = require('./lib/convert');
+var resize = require('./lib/resize');
+var validate = require('./lib/validate');
+var tobuffer = require('./lib/tobuffer');
+var compressSVG = require('./lib/compress_svg');
 
 // get reference to S3 client 
 var s3 = new AWS.S3();
@@ -16,96 +24,64 @@ var s3 = new AWS.S3();
 exports.handler = function(event, context) {
 
   console.log("Reading options from event:\n", util.inspect(event, {depth: 5}));
+  var isValid = validate(event);
+  if (!isValid) {return;}
 
   var srcKeyTmp = event.Records[0].s3.object.key;
   var srcBucket = event.Records[0].s3.bucket.name;
   var srcKey    = decodeURI(srcKeyTmp).replace(/\+/g, ' ');
   var dstBucket = nconf.get('aws:bucket_name');
-  var dstKey    = srcKey; // keep the same name
-
-  // Sanity check: validate that source and destination are different buckets.
-  if (srcBucket == dstBucket) {
-    console.error("Destination bucket must not match source bucket.", srcBucket);
-    return;
-  }
-
-  // Infer the image type.
   var typeMatch = srcKey.match(/\.([^.]*)$/);
-  if (!typeMatch) {
-    console.error('unable to infer image type for key ' + srcKey);
-    return;
-  }
-
-  var imageType = typeMatch[1];
-  if (["jpg", "jpeg", "png", "gif", "svg"].indexOf(imageType)<0) {
-    console.log('skipping non-image ' + srcKey);
-    return;
-  }
-
-  console.log('starting');
+  var imageType = typeMatch[1]||'';
+  imageType = imageType.toLowerCase();
 
   // Download the image from S3, transform, and upload to a different S3 bucket.
   async.waterfall([
     function download(next) {
-      console.log('fetch image');
       // Download the image from S3 into a buffer.
       s3.getObject({
-          Bucket: srcBucket,
-          Key: srcKey
-        },
-      next);
-    },
-    function tranform(response, next) {
-      console.log('transform image');
-
-      var contentType = response.ContentType;
-      var mime = nconf.get('mime');
-      var fnName = mime[contentType];
-
-      if (!fnName) {
-        return console.error('mime type not supported');
-      }
-
-      var imagemin = new Imagemin()
-      .src(response.Body)
-      .use(Imagemin[fnName]({progressive: true}))
-      .run(function (err, file) {
-
+        Bucket: srcBucket,
+        Key: srcKey
+      },
+      function (err, res) {
         if (err) {
-          console.error('\n\nYou probably need to recompile for your architecture.');
-          console.error(' remove your node_modules folder and start over.\n\n');
-          console.error(err.message);
-          return;
+          console.log(err);
         }
 
-        // Each new event contains a single file.
-        next(null, contentType, file[0].contents);
+        console.log('fetched');
+        var contentType = res.ContentType;
+        var acceptMime = nconf.get('valid-mime');
+        if (acceptMime.indexOf(contentType)<0) {
+          return next(null, srcKey, contentType, res.Body);
+        }
+
+        next(null, srcKey, contentType, gm(res.Body));
       });
-
     },
-    function upload(contentType, data, next) {
-      console.log('upload image');
 
+    convert(event),
+    resize(event),
+    compress(event),
+    tobuffer(event),
+    compressSVG(event),
+
+    function upload(fileName, fileType, data, next) {
       // Stream the transformed image to a different S3 bucket.
       s3.putObject({
           Bucket: dstBucket,
-          Key: dstKey,
+          Key: fileName,
           Body: data,
-          ContentType: contentType
+          ContentType: fileType
         },
         next);
       }], function (err) {
+
       if (err) {
-        console.error(
-          'Unable to resize ' + srcBucket + '/' + srcKey +
-          ' and upload to ' + dstBucket + '/' + dstKey +
-          ' due to an error: ' + err
-        );
+        //notify('ERROR', event);
+        console.log('error');
       } else {
-        console.log(
-          'Successfully resized ' + srcBucket + '/' + srcKey +
-          ' and uploaded to ' + dstBucket + '/' + dstKey
-        );
+        //notify('SUCCESS', event)
+        console.log('upload');
       }
 
       context.done();
