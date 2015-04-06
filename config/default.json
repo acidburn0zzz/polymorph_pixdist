@@ -13,11 +13,8 @@
 
   "compression": {
     "quality": 75,
-    "image/tiff": "JPEG",
     "image/png": "Lossless",
-    "image/svg+xml": "JPEG",
-    "image/jpeg": "JPEG",
-    "image/gif": "JPEG"
+    "image/jpeg": "JPEG"
   },
 
   "valid-type": ["jpg", "jpeg", "png", "gif", "svg", "tiff", "bmp"],
@@ -25,6 +22,6 @@
 
   "convert-mime":  ["image/png", "image/tiff", "image/bmp"],
   "resize-mime":   ["image/png", "image/jpeg", "image/gif", "image/bmp", "image/tiff"],
-  "compress-mime": ["image/png", "image/jpeg", "image/gif"],
+  "compress-mime": ["image/png", "image/jpeg"],
   "compress-svg":  ["image/svg+xml"]
 }
