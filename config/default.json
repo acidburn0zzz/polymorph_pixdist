@@ -23,8 +23,8 @@
   "valid-type": ["jpg", "jpeg", "png", "gif", "svg", "tiff", "bmp"],
   "valid-mime": ["image/png", "image/jpeg", "image/tiff", "image/bmp", "image/gif"],
 
-  "convert-mime": ["image/png", "image/tiff", "image/bmp"],
-  "resize-mime": ["image/png", "image/jpeg", "image/gif", "image/bmp", "image/tiff"],
-  "compress-mime": ["image/png", "image/jpeg"],
-  "compress-svg": ["image/svg+xml"]
+  "convert-mime":  ["image/png", "image/tiff", "image/bmp"],
+  "resize-mime":   ["image/png", "image/jpeg", "image/gif", "image/bmp", "image/tiff"],
+  "compress-mime": ["image/png", "image/jpeg", "image/gif"],
+  "compress-svg":  ["image/svg+xml"]
 }
