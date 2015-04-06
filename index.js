@@ -63,6 +63,7 @@ exports.handler = function(event, context) {
     resize(event),
     compress(event),
     tobuffer(event),
+
     compressSVG(event),
 
     function upload(fileName, fileType, data, next) {

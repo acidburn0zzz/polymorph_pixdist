@@ -49,6 +49,29 @@ zip -r lambda.zip .
 aws lambda upload-function --function-name=png-optimize --function-zip=lambda.zip --runtime=nodejs --role="arn:aws:iam::273752619615:role/lambda_exec_role" --handler=index.handler --mode=event
 ```
 
+### Processing Per Image Type
+
+```
+Convert To JPEG:
+PNG, BMP, TIFF
+
+Converts any file type passed in to JPEG for better compression.
+```
+
+```
+Resize:
+PNG, JPEG, GIF, BMP, TIFF
+
+If the file size is larger than that specified in the config we resize these formats.
+```
+
+```
+Compress:
+SVG, JPEG, PNG, GIF
+
+TIFF and BMP are not compressible formats. So they are ignored.
+```
+
 ### TODOs
 
 * Create thumbnail version
