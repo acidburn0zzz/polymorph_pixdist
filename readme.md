@@ -45,7 +45,7 @@ npm install
 then on your local machine
 
 ```
-zip -r lambda.zip .
+zip -r lambda.zip . -x *.git* -x *.vagrant*
 aws lambda upload-function --function-name=png-optimize --function-zip=lambda.zip --runtime=nodejs --role="arn:aws:iam::273752619615:role/lambda_exec_role" --handler=index.handler --mode=event
 ```
 

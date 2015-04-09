@@ -18,8 +18,10 @@ var validate = require('./lib/validate');
 var tobuffer = require('./lib/tobuffer');
 var compressSVG = require('./lib/compress_svg');
 
-// get reference to S3 client 
-var s3 = new AWS.S3();
+// get reference to S3 client
+var s3D = new AWS.S3({endpoint: nconf.get('aws:download_endpoint')});
+var s3U = new AWS.S3({endpoint: nconf.get('aws:upload_endpoint')});
+
 
 exports.handler = function(event, context) {
 
@@ -39,13 +41,13 @@ exports.handler = function(event, context) {
   async.waterfall([
     function download(next) {
       // Download the image from S3 into a buffer.
-      s3.getObject({
+      s3D.getObject({
         Bucket: srcBucket,
         Key: srcKey
       },
       function (err, res) {
         if (err) {
-          console.log(err);
+          throw err;
         }
 
         console.log('fetched');
@@ -68,7 +70,7 @@ exports.handler = function(event, context) {
 
     function upload(fileName, fileType, data, next) {
       // Stream the transformed image to a different S3 bucket.
-      s3.putObject({
+      s3U.putObject({
           Bucket: dstBucket,
           Key: fileName,
           Body: data,
@@ -79,7 +81,7 @@ exports.handler = function(event, context) {
 
       if (err) {
         //notify('ERROR', event);
-        console.log('error');
+        throw err;
       } else {
         //notify('SUCCESS', event)
         console.log('upload');

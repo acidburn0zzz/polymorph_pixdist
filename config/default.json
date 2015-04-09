@@ -3,7 +3,9 @@
   "loglevel": "info",
 
   "aws": {
-    "bucket_name": "deleteme-image-optim-processed"
+    "bucket_name": "adsnative-stage",
+    "upload_endpoint": "s3-us-west-1.amazonaws.com",
+    "download_endpoint": "s3-us-west-2.amazonaws.com"
   },
 
   "max": {
