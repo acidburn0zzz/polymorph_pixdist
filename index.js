@@ -65,19 +65,22 @@ exports.handler = function(event, context) {
     resize(event),
     compress(event),
     tobuffer(event),
-
     compressSVG(event),
 
     function upload(fileName, fileType, data, next) {
       // Stream the transformed image to a different S3 bucket.
       s3U.putObject({
-          Bucket: dstBucket,
-          Key: fileName,
-          Body: data,
-          ContentType: fileType
-        },
-        next);
-      }], function (err) {
+
+        Bucket: dstBucket,
+        Key: fileName,
+        Body: data,
+        ContentType: fileType
+
+      }, next);
+    }],
+
+    // end waterfall
+    function (err) {
 
       if (err) {
         //notify('ERROR', event);

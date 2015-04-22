@@ -3,7 +3,7 @@
   "loglevel": "info",
 
   "aws": {
-    "bucket_name": "adsnative-stage",
+    "bucket_name": "adsnative-www",
     "upload_endpoint": "s3-us-west-1.amazonaws.com",
     "download_endpoint": "s3-us-west-2.amazonaws.com"
   },
