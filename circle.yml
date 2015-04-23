@@ -1,26 +1,26 @@
 machine:
+  node:
+    version: 0.12.2
 
 general:
   branches:
     ignore: # list of branches to ignore
-      - master
-      - develop
       - gh-pages 
       - /feature\/.*/
 
 dependencies:
   pre:
-    - "npm install"
-    - "zip -r lambda.zip . -x *.git* -x *.vagrant*"
+    - 'npm install'
+    - 'zip -r lambda.zip . -x *.git* -x *.vagrant*'
 
 deployment:
-  oskie:
+  production:
     branch: master
     commands:
       - 'echo {} > config/stage.json'
       - 'aws lambda upload-function --function-name=img-optimize-prod --function-zip=lambda.zip --runtime=nodejs --role="arn:aws:iam::273752619615:role/lambda_exec_role" --handler=index.handler --mode=event'
 
-  ralphie:
+  stage:
     branch: develop
     commands:
       - 'echo {} > config/prod.json'
