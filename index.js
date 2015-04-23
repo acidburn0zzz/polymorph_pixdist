@@ -10,6 +10,8 @@ nconf
 .argv()
 .env()
 .file({file: path.join(__dirname, 'config', 'default.json')});
+nconf.add('stage', {type: 'file', file: 'config/stage.json'});
+nconf.add('prod', {type: 'file', file: 'config/prod.json'});
 
 var compress = require('./lib/compress');
 var convert = require('./lib/convert');
