@@ -1,19 +1,64 @@
 # Image Management
 
-NOTE: Lambda has a maximum file size of 30 megs. We need to be judicious with size constraints.
+This project is a microservice backed by aws lambda and imagemagic/graficsmagik.
+It will optimize images provided by S3 `create` events. It then upload the image
+to `aws:dest` defined in `config/default.json`.
 
-Do one thing and do it well. This project listens to S3 `create` events. It then does the following:
+Lambda's require that you maintain a raw/origin bucket and a processed/dest bucket.
+You must maintain a level of separation or there will be circular events.
 
-* compresses images
-* strips EXIF data
+`aws:orig` => `lambda` => `aws:dest`
 
-It then uploads it to the `aws:bucket_name` in `config/default.json`.
+### Supported Actions By Image Type
+
+Format | Convert To JPEG | Resize | Compress
+-------|-----------------|--------|---------
+PNG    |       x         |   x    |    x
+GIF    |       x         |   x    |    x
+JPEG   |       x         |   x    |    x
+TIFF   |       x         |   x    |    NA
+BMP    |       x         |   x    |    NA
+SVG    |       NA        |   NA   |    NA
+
+
+Caveats:
+* TIFF/BMP: These are non compressed formats meant for high quality storage.
+If you want to compress them they must be converted to another image format like JPEG.
+* GIF: We only support non animated gifs at the moment.
+* SVG: This format has much better image compression than any of the others however.
+There is some optimization that can happen here (TODO)
+
+### Work Flow
+
+`AWS EC2 Create Event`: This is triggered whenever an image has completed its
+upload into the defined `aws:orig` bucket.
+
+`Stream From Origin`: The event data is used to determine the origin bucket and path.
+It then starts streaming the asset and identifies the mime type by header.
+
+`Convert`: If the provided mimetype matches the `convert-mime` setting.
+Graphicsmagik will attempt to convert it to JPEG while uploading the original image to the destination S3 bucket and applying a `WebsiteRedirectLocation` to the new asset.
+
+`Resize`: If the provided mimetype matches the `resize-mime` setting. 
+Graphicsmagik will attempt to scale the image to within the
+`max:width` or `max:heigh` setting.
+
+`Compress`: If the provided mimetype matches the `compress-mime` settings.
+Graphicsmagik will attempt to compress the original or converted 
+image depending on the Convert step.
+
+`Compress SVG`: If the provided mimetype matches the `compress-svg` settings.
+SVGO will attempt to optimize the file.
+
+`Stream To Destination`: A Stream is then opened to the Destination bucket
+and the file is saved to `aws:dest` bucket.
+
 
 ### Installation
 
 ```
 brew install imagemagick
-brew install graphicsmagic
+brew install graphicsmagick
 npm install
 npm install -g node-lambda
 ```
@@ -28,51 +73,20 @@ npm start
 
 ### Deploy
 
-The image manipulation libraries must be compiled within a 64bit ubuntu environment.
-
-```
-vagrant up
-```
-
-on the vagrant run the following
-
-```
-nave use stable
-rm -rf node_modules
-npm install
-```
-
-then on your local machine
+AWS Lamda's are deployed as zip files. Zip the folder and then deploy it
+using the AWS command line tools.
 
 ```
 zip -r lambda.zip . -x *.git* -x *.vagrant*
-aws lambda upload-function --function-name=png-optimize --function-zip=lambda.zip --runtime=nodejs --role="arn:aws:iam::273752619615:role/lambda_exec_role" --handler=index.handler --mode=event
-```
-
-### Processing Per Image Type
-
-```
-Convert To JPEG:
-PNG, BMP, TIFF
-
-Converts any file type passed in to JPEG for better compression.
-```
-
-```
-Resize:
-PNG, JPEG, GIF, BMP, TIFF
-
-If the file size is larger than that specified in the config we resize these formats.
-```
-
-```
-Compress:
-SVG, JPEG, PNG, GIF
-
-TIFF and BMP are not compressible formats. So they are ignored.
+aws lambda upload-function \
+    --function-name=png-optimize \
+    --function-zip=lambda.zip \
+    --runtime=nodejs \
+    --role="arn:aws:iam::273752619615:role/lambda_exec_role" \
+    --handler=index.handler \
+    --mode=event
 ```
 
 ### TODOs
 
-* Create thumbnail version
-* Drop frame rate on gif images
+* Use the svg/svgo project to optimize SVG vector graphics files.

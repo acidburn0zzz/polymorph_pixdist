@@ -1,0 +1,25 @@
+
+---
+- hosts: all
+  sudo: true
+
+  vars:
+    lambda_name: png-optimize
+    aws_role: arn:aws:iam::273752619615:role/lambda_exec_role
+
+
+  tasks:
+    - name: Create Zip Of adsnative_imagemagic Folder
+      local_action: true
+      shell: zip -r lambda.zip . -x *.git* -x *.vagrant*
+
+    - name: Deploy To AWS
+      local_action: true
+      shell: |
+        aws lambda upload-function \
+          --function-name={{ lambda_name }} \
+          --function-zip=lambda.zip \
+          --runtime=nodejs \
+          --role=\""{{ aws_role }}"\" \
+          --handler=index.handler \
+          --mode=event
