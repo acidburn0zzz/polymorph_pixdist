@@ -27,7 +27,7 @@
           "arn": "arn:aws:s3:::adsnative-stage-raw"
         },
         "object": {
-          "key": "f9d45981-2258-4a91-8f7b-2e1230fb2e64.png",
+          "key": "test-trulia.png",
           "size": 1024,
           "eTag": "d41d8cd98f00b204e9800998ecf8427e"
         }

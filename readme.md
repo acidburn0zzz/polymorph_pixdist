@@ -33,8 +33,8 @@ There is some optimization that can happen here (TODO)
 `AWS EC2 Create Event`: This is triggered whenever an image has completed its
 upload into the defined `aws:orig` bucket.
 
-`Stream From Origin`: The event data is used to determine the origin bucket and path.
-It then starts streaming the asset and identifies the mime type by header.
+`From Origin`: The event data is used to determine the origin bucket and path.
+It downloads the asset and identifies the mime type by header.
 
 `Convert`: If the provided mimetype matches the `convert-mime` setting.
 Graphicsmagik will attempt to convert it to JPEG while uploading the original image to the destination S3 bucket and applying a `WebsiteRedirectLocation` to the new asset.
@@ -50,7 +50,7 @@ image depending on the Convert step.
 `Compress SVG`: If the provided mimetype matches the `compress-svg` settings.
 SVGO will attempt to optimize the file.
 
-`Stream To Destination`: A Stream is then opened to the Destination bucket
+`To Destination`: The file is now uploaded to the destination bucket
 and the file is saved to `aws:dest` bucket.
 
 
