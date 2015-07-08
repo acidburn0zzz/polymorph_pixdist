@@ -13,7 +13,7 @@ general:
 
 dependencies:
   pre:
-    - 'pip install awscli==1.7.8'
+    - 'pip install awscli==1.7.37'
     - 'sudo apt-get update; sudo apt-get install zip'
     - 'npm install'
 
@@ -23,11 +23,12 @@ deployment:
     commands:
       - 'echo {} > config/stage.json'
       - 'zip -r lambda.zip . -x *.git* -x *.vagrant*'
-      - 'aws lambda upload-function --function-name=img-optimize-prod --function-zip=lambda.zip --runtime=nodejs --role="arn:aws:iam::273752619615:role/lambda_exec_role" --handler=index.handler --mode=event --region=us-west-2'
+      - 'aws lambda update-function-code --function-name=img-optimize-stage --zip-file=fileb://lambda.zip'
 
-  stage:
+stage:
     branch: develop
     commands:
       - 'echo {} > config/prod.json'
       - 'zip -r lambda.zip . -x *.git* -x *.vagrant*'
-      - 'aws lambda upload-function --function-name=img-optimize-stage --function-zip=lambda.zip --runtime=nodejs --role="arn:aws:iam::273752619615:role/lambda_exec_role" --handler=index.handler --mode=event --region=us-west-2'
+      - 'aws lambda update-function-code --function-name=img-optimize-prod --zip-file=fileb://lambda.zip'
+
