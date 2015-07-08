@@ -78,13 +78,10 @@ using the AWS command line tools.
 
 ```
 zip -r lambda.zip . -x *.git* -x *.vagrant*
-aws lambda upload-function \
-    --function-name=png-optimize \
-    --function-zip=lambda.zip \
-    --runtime=nodejs \
-    --role="arn:aws:iam::273752619615:role/lambda_exec_role" \
-    --handler=index.handler \
-    --mode=event
+aws lambda update-function-code \
+    --function-name=img-optimize-prod \
+    --zip-file=fileb://lambda.zip \
+    --region=us-west-2
 ```
 
 ### TODOs
