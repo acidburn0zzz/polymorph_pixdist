@@ -17,18 +17,18 @@ dependencies:
     - 'sudo apt-get update; sudo apt-get install zip'
     - 'npm install'
 
+
 deployment:
   production:
     branch: master
     commands:
       - 'echo {} > config/stage.json'
       - 'zip -r lambda.zip . -x *.git* -x *.vagrant*'
-      - 'aws lambda update-function-code --function-name=img-optimize-stage --zip-file=fileb://lambda.zip'
+      - 'aws lambda update-function-code --function-name=img-optimize-stage --zip-file=fileb://lambda.zip --region=us-west-2'
 
   stage:
       branch: develop
       commands:
         - 'echo {} > config/prod.json'
         - 'zip -r lambda.zip . -x *.git* -x *.vagrant*'
-        - 'aws lambda update-function-code --function-name=img-optimize-prod --zip-file=fileb://lambda.zip'
-
+        - 'aws lambda update-function-code --function-name=img-optimize-prod --zip-file=fileb://lambda.zip --region=us-west-2'
