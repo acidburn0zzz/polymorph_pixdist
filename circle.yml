@@ -24,11 +24,11 @@ deployment:
     commands:
       - 'echo {} > config/stage.json'
       - 'zip -r lambda.zip . -x *.git* -x *.vagrant*'
-      - 'aws lambda update-function-code --function-name=img-optimize-stage --zip-file=fileb://lambda.zip --region=us-west-2'
+      - 'aws lambda update-function-code --function-name=img-optimize-prod --zip-file=fileb://lambda.zip --region=us-west-2'
 
   stage:
       branch: develop
       commands:
         - 'echo {} > config/prod.json'
         - 'zip -r lambda.zip . -x *.git* -x *.vagrant*'
-        - 'aws lambda update-function-code --function-name=img-optimize-prod --zip-file=fileb://lambda.zip --region=us-west-2'
+        - 'aws lambda update-function-code --function-name=img-optimize-stage --zip-file=fileb://lambda.zip --region=us-west-2'
