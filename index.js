@@ -4,7 +4,7 @@ var util = require('util');
 var nconf = require('nconf');
 var path = require('path');
 var gm = require('gm').subClass({ imageMagick: true });
-
+var isAnimated = require('animated-gif-detector')
 /**
  *
  * Accept from arguments environment variables and files.
@@ -28,7 +28,6 @@ var resize = require('./lib/resize');
 var validate = require('./lib/validate');
 var tobuffer = require('./lib/tobuffer');
 var compressSVG = require('./lib/compress_svg');
-
 /**
  *
  * Get reference to source and destination s3 buckets.
@@ -81,6 +80,16 @@ exports.handler = function(event, context) {
 
         next(null, srcKey, contentType, gm(res.Body));
       });
+    },
+
+    function (fileName, contentType, gm, next) {
+
+      if (isAnimated(gm.sourceBuffer)) {
+        console.log("Animated gifs arent supported");
+        next("Animated gifs arent supported");
+      }
+
+      next(null, fileName, contentType, gm, next);
     },
 
     convert(event),
