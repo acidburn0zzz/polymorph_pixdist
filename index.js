@@ -83,12 +83,10 @@ exports.handler = function(event, context) {
     },
 
     function (fileName, contentType, gm, next) {
-
       if (isAnimated(gm.sourceBuffer)) {
         console.log("Animated gifs arent supported");
-        next("Animated gifs arent supported");
+        next(true);
       }
-
       next(null, fileName, contentType, gm, next);
     },
 
@@ -117,8 +115,9 @@ exports.handler = function(event, context) {
 
     // end waterfall
     function (err) {
-
-      if (err) {
+      if (err == true) {
+        return;
+      } else {
         /**
          * FAIL
          *
