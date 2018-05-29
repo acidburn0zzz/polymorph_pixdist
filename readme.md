@@ -1,8 +1,8 @@
-# Adsnative Pixel Distiller
+# Pixel Distiller
 
 PixDist image optimization lambda is a microservice backed by aws lambda and graficsmagik. It will optimize images provided by S3 create events. It then upload the image to aws destination bucket defined in the config.
 
-Read more in the [git wiki](https://github.com/picatcha/adsnative_imagemagic/wiki)
+Read more in the [git wiki](https://github.com/picatcha/polymorph_pixdist/wiki)
 
 ### Supported Actions By Image Type
 
