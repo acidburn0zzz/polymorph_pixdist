@@ -12,7 +12,10 @@ var isAnimated = require('animated-gif-detector')
 nconf
 .argv()
 .env()
-.file({file: path.join(__dirname, 'config', 'default.json')});
+.file({file: path.join(__dirname, 'config', 'default.json')})
+.defaults({
+  "AWS_ENVIRONMENT": "default"
+});
 
 /**
  *
@@ -85,7 +88,7 @@ exports.handler = function(event, context) {
     function (fileName, contentType, gm, next) {
       if (isAnimated(gm.sourceBuffer)) {
         console.log("Animated gifs arent supported");
-        next(true);
+        return next(true);
       }
       next(null, fileName, contentType, gm, next);
     },
